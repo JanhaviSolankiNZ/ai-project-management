@@ -1,13 +1,16 @@
 import { redirect } from 'next/navigation';
+import { getAuthUser } from "@/lib/auth";
 
-export default function HomePage() {
-  // Temporary auth flag
-  // Later replace with real server auth (cookies / session)
-  const isAuthenticated = false;
+export default async function HomePage() {
+  const user = await getAuthUser();
 
-  if (isAuthenticated) {
-    redirect('/dashboard');
+  if (!user) {
+    redirect("/login");
   }
 
-  redirect('/login');
+  return (
+    <div>
+      Dashboard – Protected Content
+    </div>
+  );
 }

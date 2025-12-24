@@ -1,3 +1,10 @@
+import AuthCard from "@/components/auth/AuthCard";
+import LoginForm from "@/components/auth/LoginForm";
+
 export default function Page() {
-  return <div>Login Page</div>;
+  return (
+    <AuthCard title="Welcome back" subtitle="Login to manage your projects">
+      <LoginForm />
+    </AuthCard>
+  );
 }

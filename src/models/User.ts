@@ -2,9 +2,29 @@ import { Schema, model, models } from "mongoose";
 
 const UserSchema = new Schema(
   {
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    image: String,
+    name: {
+      type: String,
+      required: true,
+    },
+
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
+    password: {
+      type: String,
+      // Only required for credentials-based signup
+      required: function () {
+        return this.authProvider === "credentials";
+      },
+    },
+
+    image: {
+      type: String,
+      default: "",
+    },
 
     role: {
       type: String,
@@ -21,4 +41,5 @@ const UserSchema = new Schema(
   { timestamps: true }
 );
 
+// Prevent model overwrite error in dev
 export const User = models.User || model("User", UserSchema);
