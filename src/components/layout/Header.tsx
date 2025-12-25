@@ -8,6 +8,7 @@ import {
   IconButton,
   Avatar,
 } from '@mui/material';
+import { LogoutButton } from '../auth/Logout';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 
 export default function Header() {
@@ -32,7 +33,7 @@ export default function Header() {
           <IconButton>
             <NotificationsIcon />
           </IconButton>
-
+          <LogoutButton/>
           <Avatar sx={{ width: 32, height: 32 }}>
             J
           </Avatar>

@@ -83,7 +83,7 @@ export default function LoginForm() {
 
       <Divider sx={{ my: 3 }}>OR</Divider>
 
-      <Button variant="outlined" fullWidth onClick={() => signIn("google", {callbackUrl: "/"})}>
+      <Button variant="outlined" fullWidth onClick={() => signIn("google", {callbackUrl: "/dashboard"})}>
         Continue with Google
       </Button>
       <Typography variant="body2" align="center" mt={3}>

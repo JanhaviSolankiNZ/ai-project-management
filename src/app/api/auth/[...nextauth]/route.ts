@@ -2,6 +2,7 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { connectDB } from "@/lib/mongodb";
 import { User } from "@/models/User";
+import { signToken } from "@/lib/jwt";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -10,19 +11,14 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
-
-  session: {
-    strategy: "jwt",
-  },
-
+  session: { strategy: "jwt" },
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async signIn({ user }) {
       await connectDB();
-
       if (!user.email) return false;
 
       let dbUser = await User.findOne({ email: user.email });
-
       if (!dbUser) {
         dbUser = await User.create({
           name: user.name,
@@ -38,16 +34,21 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.userId = user.id;
+        token.backendToken = signToken({ userId: user.id });
       }
       return token;
     },
 
     async session({ session, token }) {
-      session.userId = token.userId;
+      session.userId = token.userId as string;
+      session.backendToken = token.backendToken as string;
       return session;
     },
-  },
 
+    async redirect({ baseUrl }) {
+      return `${baseUrl}/dashboard`;
+    },
+  },
   pages: {
     signIn: "/login",
   },

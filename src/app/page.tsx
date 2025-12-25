@@ -8,9 +8,5 @@ export default async function HomePage() {
     redirect("/login");
   }
 
-  return (
-    <div>
-      Dashboard – Protected Content
-    </div>
-  );
+  return redirect("/dashboard")
 }
