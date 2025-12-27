@@ -1,28 +1,27 @@
 import { NextResponse } from "next/server";
+import { Task } from "@/models/Task";
+import { Project } from "@/models/Project";
 import { getAuthUser } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
-import { Project } from "@/models/Project";
-import { Task } from "@/models/Task";
 import { createTaskSchema } from "@/schemas/task.schema";
 
-export async function GET() {
-  const authUser = await getAuthUser();
+// GET /api/projects/:projectId/tasks → fetch tasks for a project
+export async function GET(req: Request, { params }: { params: { projectId: string } }) {
+  const user = await getAuthUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  if (!authUser) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  const { projectId } = await params;
+
+  try {
+    const tasks = await Task.find({ projectId });
+    console.log(projectId, tasks)
+    return NextResponse.json(tasks);
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "Failed to fetch tasks" }, { status: 500 });
   }
-
-  await connectDB();
-
-  const projects = await Project.find({
-    ownerId: authUser.userId,
-  }).sort({ createdAt: -1 });
-
-  return NextResponse.json(projects);
 }
 
-
-// POST /api/projects → create a new project
 export async function POST(req: Request) {
   try {
     const user = await getAuthUser();
@@ -38,12 +37,9 @@ export async function POST(req: Request) {
     // Ensure project exists
     const project = await Project.findById(data.projectId);
     if (!project) {
-      return NextResponse.json(
-        { message: "Project not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: "Project not found" }, { status: 404 });
     }
-
+    console.log('##data',data)
     const task = await Task.create({
       projectId: data.projectId,
       title: data.title,
@@ -53,8 +49,6 @@ export async function POST(req: Request) {
       tags: data.tags,
       estimatedHours: data.estimatedHours,
       isAIGenerated: data.isAIGenerated ?? false,
-
-      /** ✅ NEW */
       deadline: data.deadline ? new Date(data.deadline) : undefined,
     });
 

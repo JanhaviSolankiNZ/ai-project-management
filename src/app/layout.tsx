@@ -2,7 +2,6 @@
 
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { theme } from '@/lib/theme';
-import EmotionCacheProvider from "@/lib/emotion-cache";
 
 export default function RootLayout({
   children,
@@ -14,9 +13,7 @@ export default function RootLayout({
       <body>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <EmotionCacheProvider>
           {children}
-          </EmotionCacheProvider>
         </ThemeProvider>
       </body>
     </html>

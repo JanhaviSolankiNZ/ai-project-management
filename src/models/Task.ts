@@ -33,6 +33,11 @@ const TaskSchema = new Schema(
     estimatedHours: Number, // AI-generated
     actualHours: Number,
 
+    deadline: {
+      type: Date,
+      required: false, // optional
+    },
+
     isAIGenerated: {
       type: Boolean,
       default: false,
